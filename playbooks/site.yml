@@ -1,0 +1,25 @@
+---
+- hosts: all
+  sudo: yes
+  vars_files:
+    - ../settings.yml
+  pre_tasks:
+
+  roles:
+    - role: base
+
+    - role: repo-epel
+      when: ansible_os_family == "RedHat"
+    - role: repo-puias
+      when: ansible_os_family == "RedHat"
+    - role: repo-remi
+      when: ansible_os_family == "RedHat"
+
+#    - role: mysql
+#      when: mysql_install is defined and mysql_install == "y"
+
+  post_tasks:
+      #    - include: tests/main.yml
+
+  handlers:
+    - include: common/handlers/main.yml

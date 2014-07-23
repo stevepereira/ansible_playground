@@ -1,0 +1,12 @@
+---
+- name: Test | Apache is installed
+  shell: httpd -v
+  when: apache_install is defined and apache_install == "y"
+  tags: test
+  when: ansible_os_family == "Redhat"
+
+- name: Test | Apache is installed
+  shell: apache2 -v
+  when: apache_install is defined and apache_install == "y"
+  tags: test
+  when: ansible_os_family == "Debian"

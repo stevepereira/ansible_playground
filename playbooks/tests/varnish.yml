@@ -1,0 +1,6 @@
+---
+- name: Test | Varnish is installed
+  shell: varnishstat -1
+  when: varnish_install is defined and varnish_install == "y" and tomcat_install == "n"
+  always_run: yes
+  tags: test
