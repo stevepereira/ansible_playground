@@ -4,13 +4,14 @@
   tags: install
   sudo: true
   with_items:
+    - atop
+    - curl
+    - git
+    - iproute2
+    - make
     - ssh-import-id
     - unzip
-    - curl
-    - atop
     - vim
-    - git
-    - make
   when: ansible_os_family == "Debian"
 
 - name: packages | update and ensure core packages are installed | yum
@@ -18,9 +19,11 @@
   tags: install
   sudo: true
   with_items:
-    - unzip
+    - atop
     - curl
-    - vim
     - git
+    - iproute2
     - make
+    - unzip
+    - vim
   when: ansible_os_family == "RedHat"

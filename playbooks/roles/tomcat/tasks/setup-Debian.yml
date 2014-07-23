@@ -1,0 +1,5 @@
+---
+- name: install Tomcat | apt
+  apt: name=tomcat7 state=installed update_cache=yes cache_valid_time=3600
+  sudo: yes
+  when: ansible_os_family == "Debian"

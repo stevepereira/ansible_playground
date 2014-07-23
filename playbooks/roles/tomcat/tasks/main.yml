@@ -1,0 +1,24 @@
+---
+
+- name: Include OS-specific variables.
+  include_vars: "{{ ansible_os_family }}.yml"
+
+- include: setup-RedHat.yml
+  when: ansible_os_family == 'RedHat'
+
+- include: setup-Debian.yml
+  when: ansible_os_family == 'Debian'
+
+- name: configure and start tomcat service      
+  service:
+    name={{ tomcat_service }}
+    state=started
+    enabled=yes
+
+- name: download tomcat sample war
+  get_url:
+    url="{{tomcat_sample_download_url}}"
+    dest="{{tomcat_webapps_dir}}/"
+  sudo: yes
+  notify: restart tomcat
+

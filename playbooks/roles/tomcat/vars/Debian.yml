@@ -1,0 +1,4 @@
+---
+tomcat_dir: "/var/lib/tomcat7"
+tomcat_webapps_dir: "{{ tomcat_dir }}/webapps"
+tomcat_service: "tomcat7"

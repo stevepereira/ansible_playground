@@ -8,10 +8,6 @@ vagrant_dir = File.expand_path(File.dirname(__FILE__))
 require 'yaml'
 vconfig = YAML::load_file(vagrant_dir + "/settings.yml")
 
-# Set box configuration options
-boxipaddress = vconfig['boxipaddress']
-boxname = vconfig['boxname']
-
 # Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
 VAGRANTFILE_API_VERSION = "2"
 
@@ -19,10 +15,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   # Configure virtual machine options.
   config.vm.box = vconfig['box']
-  config.vm.hostname = boxname
+  config.vm.hostname = vconfig['boxname']
   config.vm.box_check_update = false
 
-  config.vm.network :private_network, ip: boxipaddress
+  config.vm.network :private_network, ip: vconfig['boxipaddress']
 
   # Allow caching to be used (see the vagrant-cachier plugin)
   if Vagrant.has_plugin?("vagrant-cachier")
@@ -50,16 +46,20 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   nfs_setting = RUBY_PLATFORM =~ /darwin/ || RUBY_PLATFORM =~ /linux/
 
   # Setup synced folder for site files
+  if vconfig['host_synced_folder'] != ''
   config.vm.synced_folder vconfig['host_synced_folder'], "/var/www/site/docroot", :nfs => nfs_setting, create: true, id: "vagrant-webroot", :mount_options => ['nolock,vers=3,udp']
+  end
 
   # SSH Set up.
   config.ssh.forward_agent = true
 
   # Provision vagrant box with Ansible.
-  config.vm.provision "ansible" do |ansible|
-    ansible.playbook = vagrant_dir + "/playbooks/site.yml"
-    ansible.extra_vars = {ansible_ssh_user: 'vagrant'}
+  config.vm.provision 'ansible' do |ansible|
+    ansible.playbook = vagrant_dir + '/playbooks/site.yml'
+    ansible.extra_vars = { ansible_ssh_user: 'vagrant' }
     ansible.host_key_checking = false
+    #ansible.sudo = true    
+    #ansible.raw_arguments = ['-v']
     ansible.raw_ssh_args = '-o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o PasswordAuthentication=no -o IdentitiesOnly=yes'
     if vconfig['ansible_verbosity'] != ''
       ansible.verbose = vconfig['ansible_verbosity']

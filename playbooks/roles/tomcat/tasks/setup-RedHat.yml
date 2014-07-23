@@ -1,0 +1,8 @@
+---
+
+- name: install tomcat | yum
+  yum: name={{ item }} state=installed
+  sudo: yes
+  with_items:
+    - http://mirrors.kernel.org/fedora-epel/6/x86_64/epel-release-6-8.noarch.rpm
+    - tomcat
